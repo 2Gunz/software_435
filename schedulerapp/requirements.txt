@@ -1,0 +1,13 @@
+Install Python 2.7
+
+These worked for ubuntu
+	sudo apt install mysqlserver libmysqlclient-dev
+	sudo apt install python-flask
+	sudo apt install python-passlib
+	sudo pip install flask-mysqldb
+
+
+Didn't use these ones
+	pip install passlib
+	pip install flask-wtf
+	pip install flask-mysqldb
