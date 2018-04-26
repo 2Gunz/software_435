@@ -5,9 +5,9 @@ These worked for ubuntu
 	sudo apt install python-flask
 	sudo apt install python-passlib
 	sudo pip install flask-mysqldb
+	sudo pip install flask-wtf
 
 
 Didn't use these ones
 	pip install passlib
-	pip install flask-wtf
 	pip install flask-mysqldb
