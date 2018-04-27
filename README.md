@@ -1,3 +1,5 @@
 # Crownpoint Healthcare Facilities Scheduling App
-This repository contains the code for an employee scheduling app designed for Crownpoint Healthcare Facilities as part of ECE 435: Software Engineering. The code is currently still in the development stages.   
-  Run with: python app.py
+This repository contains the code for an employee scheduling app designed for Crownpoint Healthcare Facilities as part of ECE 435: Software Engineering. Our app is written in python and uses the flask framework to communicate with a MySQL database. Users will be able to register and login to submit a request form designating their shift preferences. This information will be taken into consideration as our backend algorithms schedule employees for the month. Once the scheduling magic is done, the app will produce a shareable calendar. In addition, our app will be deployed using AWS to take advantages of the benefits of cloud computing. Some of which include scalability, availability, maintenance, and reliability. At this point in time, our code is in the development stages. Please check back to see the finished product.  
+  
+Team: Miguel Lujan, Rachel Fulcher, Leon Wilson, Kashif Nadeen, Panayioti Kitsos, Will Forrister, Kushal Patel  
+  Run with: python application.py
