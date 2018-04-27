@@ -1,0 +1,42 @@
+<!-- example 2 - using auto margins -->
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Crownpoint Healthcare Scheduler</a>
+            </li>
+            {% if session.logged_in %}
+            <li class="nav-item">
+                <a class="nav-link" href="/requestform">Request Form</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="/about">About</a>
+            </li>
+    <!--        
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+    -->
+        </ul>
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            {% if session.logged_in %}
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Register</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

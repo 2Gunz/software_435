@@ -1,0 +1,58 @@
+# Install python 2.7 and pip
+sudo apt-get install python-pip python-dev
+pip install mysqlclient
+
+# Install virtualenv
+sudo apt install python-virtualenv
+sudo pip install virtualenv
+
+# Create virtualenv
+virtualenv ~/<env_name>
+virtualenv ~/crown-env
+
+# Launch virtualenv (anytime using app or adding app dependencies)
+source ~/<env_name>/bin/activate
+source ~/crown-env/bin/activate
+
+# Install app dependencies using isolated virtualenv environment
+sudo apt install mysqlserver libmysqlclient-dev
+sudo apt install python-flask
+sudo apt install python-passlib
+pip install flask-mysqldb
+
+# Pip installation alternatives
+pip install flask-wtf
+pip install passlib
+
+# Redirect dependencies to requirements.txt (Anytime you need to add a dependency)
+pip freeze > requirements.txt
+
+
+# Download MySQL and it will make you set the root password
+# Login MySQL locally
+mysql -u root -p
+# Login MySQL RDS from EC2 instance
+mysql -h <endpoint> -P 3306 -u <user> -p
+
+# Create a database
+CREATE DATABASE <db_name>;
+
+# Switch to database
+USE <db_name>;
+
+# Create a db table
+CREATE TABLE <table_name>(param, param);
+CREATE TABLE users(id INT(11) AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), username VARCHAR(30), password VARCHAR(100), register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+
+# Clear table entrie
+TRUNCATE <table_name>
+
+# Run web app locally
+python application.py
+
+# AWS url
+crownpoint.us-west-2.elasticbeanstalk.com
+
+# Local url
+localhost:<port>
+localhost:5000
