@@ -3,13 +3,17 @@ from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
+from flask_sslify import SSLify
 import os
 
 # Start flask application
 application = Flask(__name__)
 
+# Force https
+sslify = SSLify(application)
+
 # Config MySQL local
-application.config['SECRET_KEY'] = os.urandom(24).encode('hex')
+application.config['SECRET_KEY'] = os.urandom(32).encode('hex')
 application.config['MYSQL_HOST'] = 'localhost'
 application.config['MYSQL_USER'] = 'root'
 application.config['MYSQL_PASSWORD'] = 'Nava435'
@@ -190,7 +194,7 @@ class RequestForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=100)])
 
 """
-**** REQUEST TO IMPLEMENT REQUEST FORM PARAMETERS AND UPDATE TEMPLATE ****
+**** NEED TO IMPLEMENT REQUEST FORM PARAMETERS AND UPDATE TEMPLATE ****
 Days off: [date]
 By schdule type - [Full time, part time], [Fixed, flexible, mixed]
 By age - [Pediatric, Adult, Geriatric, Family]

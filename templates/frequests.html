@@ -3,9 +3,15 @@
 
 {% block body %}
   <h1>Request Forms</h1>
-  <ul class="list-group">
-    {% for frequest in frequests %}
-      <li class="list-group-item"><a href="frequest/{{frequest.id}}">{{frequest.title}}</a></li>
-    {% endfor %}
+  <table class="table table-striped">
+  	<tr>
+  		<th>Title</th>
+  	</tr>
+    	{% for frequest in frequests %}
+      	<tr>
+      		<td><li class="list-group-item"><a href="frequest/{{frequest.id}}">{{frequest.title}}</a></li></td>
+      	</tr>
+    	{% endfor %}
+  </table>
   </ul>
 {% endblock %}
