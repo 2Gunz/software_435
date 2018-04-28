@@ -4,10 +4,17 @@
 {% block body %}
 	<div class="jumbotron-light text-center">
 		<h1>Welcome to the Crownpoint Healthcare Scheduler!</h1>
-		<p class="lead">Please login or register to request your preferred shifts for the month.</p>
+		{% if session.logged_in == NULL %}
+			<p class="lead">Please login or register to request your preferred shifts for the month.</p>
+		{% endif %}
 	</div>
-	<div class="jumbotron-light text-center">
+	<div class="jumbotron-light text-center mt-4 mb-4">
 		<img src="https://www.careermd.com/employers/uploadedlogos/Crownpoint%20Healthcare%20Facility%20-%20244444902.thumb.png">
 	</div>
-	
+	<div class='jumbotron-light text-center mt-4'>
+		{% if session.logged_in == NULL %}
+      		<a href="/login" class="btn btn-success btn-lg">Login</a>
+      		<a href="/register" class="btn btn-primary btn-lg">Register</a>
+    	{% endif %}		
+	</div>
 {% endblock %}

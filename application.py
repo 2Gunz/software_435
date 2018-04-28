@@ -3,29 +3,30 @@ from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
+import os
 
 # Start flask application
 application = Flask(__name__)
 
 # Config MySQL local
-"""
+application.config['SECRET_KEY'] = os.urandom(24).encode('hex')
 application.config['MYSQL_HOST'] = 'localhost'
 application.config['MYSQL_USER'] = 'root'
 application.config['MYSQL_PASSWORD'] = 'Nava435'
-application.config['MYSQL_DB'] = 'schedulerapplication'
+application.config['MYSQL_DB'] = 'schedulerapp'
 application.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 """
 # Config MySQL AWS RDS
-application.config['SECRET_KEY'] = 'e2nf9s3b-0fm3si5z-l3mi4k7'
+application.config['SECRET_KEY'] = os.urandom(24).encode('hex')
 application.config['MYSQL_HOST'] = 'aa168k8g4t45xqt.cx1fprjct8eq.us-west-2.rds.amazonaws.com'
 application.config['MYSQL_USER'] = 'root'
+# [WARNING]: must change database password for final delivery
 application.config['MYSQL_PASSWORD'] = 'Nava435!'
 application.config['MYSQL_DB'] = 'schedulerapp'
 application.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
+"""
 # Initialize MySQL
 mysql = MySQL(application)
-
 
 # Home page template
 @application.route('/')
@@ -38,7 +39,6 @@ def about():
     return render_template('about.html')
 
 # Class for registration form format
-""" NEED: add provider type, specialty, and license"""
 class RegisterForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=50)])
     username = StringField('Username', [validators.Length(min=4, max=25)])
@@ -102,7 +102,7 @@ def login():
                 session['username'] = username
 
                 flash('You are now logged in', 'success')
-                return redirect(url_for('about'))
+                return redirect(url_for('dashboard'))
             else:
                 error = 'Invalid login'
                 return render_template('login.html', error=error)
@@ -132,47 +132,158 @@ def logout():
     session.clear()
     flash('You are now logged out', 'success')
     return redirect(url_for('index'))
-"""
-# Class for request form format
+
+# Request forms
+@application.route('/frequests')
+def frequests():
+    # Create cursor
+    cur = mysql.connection.cursor()
+
+    # Get articles
+    result = cur.execute("SELECT * FROM requests")
+
+    frequests = cur.fetchall()
+
+    if result > 0:
+        return render_template('frequests.html', frequests=frequests)
+    else:
+        error = 'No Request Forms Found'
+        return render_template('frequests.html', error=error)
+    # Close connection
+    cur.close()
+
+# Single Resquest Form
+@application.route('/frequest/<string:id>/')
+def frequest(id):
+    # Create cursor
+    cur = mysql.connection.cursor()
+
+    # Get request form
+    result = cur.execute("SELECT * FROM requests WHERE id = %s", [id])
+
+    frequest = cur.fetchone()
+
+    return render_template('frequest.html', frequest=frequest)
+
+# Dashboard
+@application.route('/dashboard')
+@is_logged_in
+def dashboard():
+    # Create cursor
+    cur = mysql.connection.cursor()
+
+    # Get requests
+    result = cur.execute("SELECT * FROM requests")
+
+    frequests = cur.fetchall()
+
+    if result > 0:
+        return render_template('dashboard.html', frequests=frequests)
+    else:
+        error = 'No Request Forms Found'
+        return render_template('dashboard.html', error=error)
+    # Close connection
+    cur.close()
+
+# Request Form Class
 class RequestForm(Form):
-    # Enter request form entries here
-    # Days off: [date]
-    # By schdule type - [Full time, part time], [Fixed, flexible, mixed]
-    # By age - [Pediatric, Adult, Geriatric, Family]
-    # By specialty - [Emergency, Urgent Care, Primary Care, Obstetrics]
-    # By license - [Physician, Nurse Midwife, Nurse Practitioner]
-    # Preferences: [Days in row, Weekends, Practice Type, Locations]
+    title = StringField('Title', [validators.Length(min=1, max=100)])
+
 """
-# Request form template
-@application.route('/requestform', methods=['GET', 'POST'])
-def requestform():
-    return render_template('requestform.html')
-    """
-    # Enter request template functionality and validation here
-    # Most values will probably be checkboxes
+**** REQUEST TO IMPLEMENT REQUEST FORM PARAMETERS AND UPDATE TEMPLATE ****
+Days off: [date]
+By schdule type - [Full time, part time], [Fixed, flexible, mixed]
+By age - [Pediatric, Adult, Geriatric, Family]
+By specialty - [Emergency, Urgent Care, Primary Care, Obstetrics]
+By license - [Physician, Nurse Midwife, Nurse Practitioner]
+Preferences: [Days in row, Weekends, Practice Type, Locations]
+"""
+
+# Add Request
+@application.route('/add_frequest', methods=['GET', 'POST'])
+@is_logged_in
+def add_frequest():
     form = RequestForm(request.form)
     if request.method == 'POST' and form.validate():
-        # NEED: add validators for RequestForm class
+        title = form.title.data
 
-        # Create cursor
+        # Create Cursor
         cur = mysql.connection.cursor()
 
-        # Execute query
-        cur.execute("INSERT INTO users(name, daysinrow, weekends , practice type, location) VALUES(%s,%s,%s,%s)", (name, email, username, password))
+        # Execute
+        cur.execute("INSERT INTO requests(title) VALUES(%s)", (title, ))
 
-        # Commit to db
+        # Commit to DB
         mysql.connection.commit()
 
-        # Close the connection
+        #Close connection
         cur.close()
 
-        flash('Thank you for submitting your schedule request', 'success')
+        flash('Request Form Created', 'success')
 
-        return redirect(url_for('logout'))
-    return render_template('requestform.html', form=form)
-    """
+        return redirect(url_for('dashboard'))
 
-# Run program
+    return render_template('add_frequest.html', form=form)
+
+
+# Edit Request Form
+@application.route('/edit_frequest/<string:id>', methods=['GET', 'POST'])
+@is_logged_in
+def edit_frequest(id):
+    # Create cursor
+    cur = mysql.connection.cursor()
+
+    # Get request form by id
+    result = cur.execute("SELECT * FROM requests WHERE id = %s", [id])
+
+    frequest = cur.fetchone()
+    cur.close()
+    # Get form
+    form = RequestForm(request.form)
+
+    # Populate request form fields
+    form.title.data = frequest['title']
+
+    if request.method == 'POST' and form.validate():
+        title = request.form['title']
+
+        # Create Cursor
+        cur = mysql.connection.cursor()
+        application.logger.info(title)
+        # Execute
+        cur.execute ("UPDATE requests SET title=%s WHERE id=%s",(title, id))
+        # Commit to DB
+        mysql.connection.commit()
+
+        #Close connection
+        cur.close()
+
+        flash('Request Form Updated', 'success')
+
+        return redirect(url_for('dashboard'))
+
+    return render_template('edit_frequest.html', form=form)
+
+# Delete Request Form
+@application.route('/delete_frequest/<string:id>', methods=['POST'])
+@is_logged_in
+def delete_frequest(id):
+    # Create cursor
+    cur = mysql.connection.cursor()
+
+    # Execute
+    cur.execute("DELETE FROM requests WHERE id = %s", [id])
+
+    # Commit to DB
+    mysql.connection.commit()
+
+    #Close connection
+    cur.close()
+
+    flash('Request Form Deleted', 'success')
+
+    return redirect(url_for('dashboard'))
+
+# Run program (ignored when using AWS EB)
 if __name__ == '__main__':
-    application.secret_key='Secret_Nava'
     application.run(debug=True)
